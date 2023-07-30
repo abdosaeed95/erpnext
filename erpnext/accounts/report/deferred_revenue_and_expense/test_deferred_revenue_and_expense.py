@@ -119,6 +119,26 @@ class TestDeferredRevenueAndExpense(FrappeTestCase, AccountsTestMixin):
 		pda.insert()
 		pda.submit()
 
+		acc_settings = frappe.get_doc("Accounts Settings")
+		print("Accounts Settings")
+		print(acc_settings.as_dict())
+		print("GL Entries")
+		list(
+			print(x)
+			for x in frappe.db.get_all(
+				"GL Entry",
+				filters={"voucher_no": pi.name},
+				fields=["voucher_no", "posting_date", "account", "debit", "credit"],
+			)
+		)
+
+		print("Process Deferred Accounting")
+		print(pda.as_dict())
+
+		print("Purchase Invocie")
+		si.reload()
+		print(si.as_dict())
+
 		# execute report
 		fiscal_year = frappe.get_doc("Fiscal Year", get_fiscal_year(date="2021-05-01"))
 		self.filters = frappe._dict(
@@ -192,8 +212,24 @@ class TestDeferredRevenueAndExpense(FrappeTestCase, AccountsTestMixin):
 		pda.submit()
 
 		acc_settings = frappe.get_doc("Accounts Settings")
+		print("Accounts Settings")
 		print(acc_settings.as_dict())
-		list(print(x) for x in frappe.db.get_all("GL Entry", filters={"voucher_no": pi.name}, fields=["voucher_no","posting_date", "account", "debit", "credit"]))
+		print("GL Entries")
+		list(
+			print(x)
+			for x in frappe.db.get_all(
+				"GL Entry",
+				filters={"voucher_no": pi.name},
+				fields=["voucher_no", "posting_date", "account", "debit", "credit"],
+			)
+		)
+
+		print("Process Deferred Accounting")
+		print(pda.as_dict())
+
+		print("Purchase Invocie")
+		pi.reload()
+		print(pi.as_dict())
 
 		# execute report
 		fiscal_year = frappe.get_doc("Fiscal Year", get_fiscal_year(date="2021-05-01"))
