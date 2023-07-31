@@ -404,6 +404,7 @@ def book_deferred_income_or_expense(doc, deferred_process, posting_date=None):
 			prev_posting_date = end_date
 			print(f"acc frozen, posting_date changed to: {gl_posting_date}")
 
+		print(f"Flag before posting Ledger entries {frappe.flags.deferred_accounting_error}")
 		if via_journal_entry:
 			book_revenue_via_journal_entry(
 				doc,
@@ -570,8 +571,11 @@ def make_gl_entries(
 			print("Making GL Entries")
 			list([print(x) for x in gl_entries])
 			make_gl_entries(gl_entries, cancel=(doc.docstatus == 2), merge_entries=True)
+			print(f"before. flag: {frappe.flags.deferred_accounting_error}. Committing...")
 			frappe.db.commit()
+			print(f"after. flag: {frappe.flags.deferred_accounting_error}")
 		except Exception as e:
+			print("Print exception:")
 			print(e.args)
 			print(traceback.format_exc())
 			if frappe.flags.in_test:
