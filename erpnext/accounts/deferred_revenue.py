@@ -373,6 +373,7 @@ def book_deferred_income_or_expense(doc, deferred_process, posting_date=None):
 		total_days = date_diff(item.service_end_date, item.service_start_date) + 1
 		total_booking_days = date_diff(end_date, start_date) + 1
 
+		print(f"total_days: {total_days}, total_booking_days:{total_booking_days}")
 		if book_deferred_entries_based_on == "Months":
 			amount, base_amount = calculate_monthly_amount(
 				doc,
@@ -389,6 +390,7 @@ def book_deferred_income_or_expense(doc, deferred_process, posting_date=None):
 				doc, item, last_gl_entry, total_days, total_booking_days, account_currency
 			)
 
+		print(f"amount: {amount}, base_amount:{base_amount}")
 		if not amount:
 			return
 
@@ -398,6 +400,7 @@ def book_deferred_income_or_expense(doc, deferred_process, posting_date=None):
 		if accounts_frozen_upto and getdate(end_date) <= getdate(accounts_frozen_upto):
 			gl_posting_date = get_last_day(add_days(accounts_frozen_upto, 1))
 			prev_posting_date = end_date
+			print(f"acc frozen, posting_date changed to: {gl_posting_date}")
 
 		if via_journal_entry:
 			book_revenue_via_journal_entry(
@@ -432,9 +435,13 @@ def book_deferred_income_or_expense(doc, deferred_process, posting_date=None):
 
 		# Returned in case of any errors because it tries to submit the same record again and again in case of errors
 		if frappe.flags.deferred_accounting_error:
+			print("Deferred ACcounting Error. Func returned.")
+			print(f"Flags: {frappe.flags}")
 			return
 
+		print(f"end_date:{end_date}, posting_date{posting_date}, last_gl_entry: {last_gl_entry}")
 		if getdate(end_date) < getdate(posting_date) and not last_gl_entry:
+			print("Next recursive call made")
 			_book_deferred_revenue_or_expense(
 				item,
 				via_journal_entry,
@@ -455,6 +462,7 @@ def book_deferred_income_or_expense(doc, deferred_process, posting_date=None):
 
 	for item in doc.get("items"):
 		if item.get(enable_check):
+			print(f"item: {item.item_code} calling deferred booking method now")
 			_book_deferred_revenue_or_expense(
 				item, via_journal_entry, submit_journal_entry, book_deferred_entries_based_on
 			)
