@@ -662,7 +662,11 @@ def book_revenue_via_journal_entry(
 			journal_entry.submit()
 
 		frappe.db.commit()
-	except Exception:
+	except Exception as e:
+		print("Print exception for Deferred JE")
+		print(e.args)
+		print(traceback.format_exc())
+
 		frappe.db.rollback()
 		doc.log_error(f"Error while processing deferred accounting for Invoice {doc.name}")
 		frappe.flags.deferred_accounting_error = True
