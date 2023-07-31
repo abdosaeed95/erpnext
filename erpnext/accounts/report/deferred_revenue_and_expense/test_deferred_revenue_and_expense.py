@@ -76,7 +76,15 @@ class TestDeferredRevenueAndExpense(FrappeTestCase, AccountsTestMixin):
 	def tearDown(self):
 		frappe.db.rollback()
 
-	@change_settings("Accounts Settings", {"book_deferred_entries_based_on": "Months"})
+	@change_settings(
+		"Accounts Settings",
+		{
+			"book_deferred_entries_based_on": "Months",
+			"automatically_process_deferred_accounting_entry": 0,
+			"book_deferred_entries_via_journal_entry": 1,
+			"submit_journal_entries": 1,
+		},
+	)
 	def test_deferred_revenue(self):
 		self.create_item("_Test Internet Subscription", 0, self.warehouse, self.company)
 		item = frappe.get_doc("Item", self.item)
@@ -165,7 +173,15 @@ class TestDeferredRevenueAndExpense(FrappeTestCase, AccountsTestMixin):
 		]
 		self.assertEqual(report.period_total, expected)
 
-	@change_settings("Accounts Settings", {"book_deferred_entries_based_on": "Months"})
+	@change_settings(
+		"Accounts Settings",
+		{
+			"book_deferred_entries_based_on": "Months",
+			"automatically_process_deferred_accounting_entry": 0,
+			"book_deferred_entries_via_journal_entry": 1,
+			"submit_journal_entries": 1,
+		},
+	)
 	def test_deferred_expense(self):
 		self.create_item("_Test Office Desk", 0, self.warehouse, self.company)
 		item = frappe.get_doc("Item", self.item)
@@ -257,7 +273,15 @@ class TestDeferredRevenueAndExpense(FrappeTestCase, AccountsTestMixin):
 		]
 		self.assertEqual(report.period_total, expected)
 
-	@change_settings("Accounts Settings", {"book_deferred_entries_based_on": "Months"})
+	@change_settings(
+		"Accounts Settings",
+		{
+			"book_deferred_entries_based_on": "Months",
+			"automatically_process_deferred_accounting_entry": 0,
+			"book_deferred_entries_via_journal_entry": 1,
+			"submit_journal_entries": 1,
+		},
+	)
 	def test_zero_months(self):
 		self.create_item("_Test Internet Subscription", 0, self.warehouse, self.company)
 		item = frappe.get_doc("Item", self.item)
