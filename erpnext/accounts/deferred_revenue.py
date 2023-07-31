@@ -353,6 +353,12 @@ def book_deferred_income_or_expense(doc, deferred_process, posting_date=None):
 		start_date, end_date, last_gl_entry = get_booking_dates(
 			doc, item, posting_date=posting_date, prev_posting_date=prev_posting_date
 		)
+
+		print("Inside PDA")
+		print(
+			f"start:{start_date}, end:{end_date}, last_gl:{last_gl_entry}, prev_posting_date:{prev_posting_date}"
+		)
+
 		if not (start_date and end_date):
 			return
 

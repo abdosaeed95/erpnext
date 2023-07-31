@@ -147,6 +147,26 @@ class TestDeferredRevenueAndExpense(FrappeTestCase, AccountsTestMixin):
 		si.reload()
 		print(si.as_dict())
 
+		print("PCV's")
+		list(
+			print(x)
+			for x in frappe.db.get_all(
+				"Period Closing Voucher",
+				filters={"docstatus": 1},
+				fields=["transaction_date", "posting_date", "fiscal_year", "company"],
+			)
+		)
+
+		print("Fiscal years")
+		list(
+			print(x)
+			for x in frappe.db.get_all(
+				"Fiscal Year",
+				filters={"disabled": 0},
+				fields=["year_start_date", "year_end_date", "year"],
+			)
+		)
+
 		# execute report
 		fiscal_year = frappe.get_doc("Fiscal Year", get_fiscal_year(date="2021-05-01"))
 		self.filters = frappe._dict(
@@ -249,6 +269,26 @@ class TestDeferredRevenueAndExpense(FrappeTestCase, AccountsTestMixin):
 		print("Purchase Invocie")
 		pi.reload()
 		print(pi.as_dict())
+
+		print("PCV's")
+		list(
+			print(x)
+			for x in frappe.db.get_all(
+				"Period Closing Voucher",
+				filters={"docstatus": 1},
+				fields=["transaction_date", "posting_date", "fiscal_year", "company"],
+			)
+		)
+
+		print("Fiscal years")
+		list(
+			print(x)
+			for x in frappe.db.get_all(
+				"Fiscal Year",
+				filters={"disabled": 0},
+				fields=["year_start_date", "year_end_date", "year"],
+			)
+		)
 
 		# execute report
 		fiscal_year = frappe.get_doc("Fiscal Year", get_fiscal_year(date="2021-05-01"))
