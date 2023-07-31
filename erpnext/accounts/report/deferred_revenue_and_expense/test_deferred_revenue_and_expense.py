@@ -81,8 +81,8 @@ class TestDeferredRevenueAndExpense(FrappeTestCase, AccountsTestMixin):
 		{
 			"book_deferred_entries_based_on": "Months",
 			"automatically_process_deferred_accounting_entry": 0,
-			"book_deferred_entries_via_journal_entry": 1,
-			"submit_journal_entries": 1,
+			"book_deferred_entries_via_journal_entry": 0,
+			"submit_journal_entries": 0,
 		},
 	)
 	def test_deferred_revenue(self):
@@ -135,7 +135,7 @@ class TestDeferredRevenueAndExpense(FrappeTestCase, AccountsTestMixin):
 			print(x)
 			for x in frappe.db.get_all(
 				"GL Entry",
-				filters={"voucher_no": pi.name},
+				filters={"voucher_no": si.name},
 				fields=["voucher_no", "posting_date", "account", "debit", "credit"],
 			)
 		)
@@ -143,7 +143,7 @@ class TestDeferredRevenueAndExpense(FrappeTestCase, AccountsTestMixin):
 		print("Process Deferred Accounting")
 		print(pda.as_dict())
 
-		print("Purchase Invocie")
+		print("Sales Invocie")
 		si.reload()
 		print(si.as_dict())
 
@@ -171,6 +171,9 @@ class TestDeferredRevenueAndExpense(FrappeTestCase, AccountsTestMixin):
 			{"key": "jul_2021", "total": 100.0, "actual": 100.0},
 			{"key": "aug_2021", "total": 0, "actual": 0},
 		]
+
+		list([print(x) for x in report.period_total])
+
 		self.assertEqual(report.period_total, expected)
 
 	@change_settings(
@@ -178,8 +181,8 @@ class TestDeferredRevenueAndExpense(FrappeTestCase, AccountsTestMixin):
 		{
 			"book_deferred_entries_based_on": "Months",
 			"automatically_process_deferred_accounting_entry": 0,
-			"book_deferred_entries_via_journal_entry": 1,
-			"submit_journal_entries": 1,
+			"book_deferred_entries_via_journal_entry": 0,
+			"submit_journal_entries": 0,
 		},
 	)
 	def test_deferred_expense(self):
@@ -271,6 +274,7 @@ class TestDeferredRevenueAndExpense(FrappeTestCase, AccountsTestMixin):
 			{"key": "jul_2021", "total": -100.0, "actual": -100.0},
 			{"key": "aug_2021", "total": 0, "actual": 0},
 		]
+		list([print(x) for x in report.period_total])
 		self.assertEqual(report.period_total, expected)
 
 	@change_settings(
@@ -278,8 +282,8 @@ class TestDeferredRevenueAndExpense(FrappeTestCase, AccountsTestMixin):
 		{
 			"book_deferred_entries_based_on": "Months",
 			"automatically_process_deferred_accounting_entry": 0,
-			"book_deferred_entries_via_journal_entry": 1,
-			"submit_journal_entries": 1,
+			"book_deferred_entries_via_journal_entry": 0,
+			"submit_journal_entries": 0,
 		},
 	)
 	def test_zero_months(self):
