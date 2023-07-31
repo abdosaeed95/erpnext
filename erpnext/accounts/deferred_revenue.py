@@ -1,3 +1,5 @@
+import traceback
+
 import frappe
 from frappe import _
 from frappe.email import sendmail_to_system_managers
@@ -436,7 +438,7 @@ def book_deferred_income_or_expense(doc, deferred_process, posting_date=None):
 		# Returned in case of any errors because it tries to submit the same record again and again in case of errors
 		if frappe.flags.deferred_accounting_error:
 			print("Deferred ACcounting Error. Func returned.")
-			print(f"Flags: {frappe.flags}")
+			# print(f"Flags: {frappe.flags}")
 			return
 
 		print(f"end_date:{end_date}, posting_date{posting_date}, last_gl_entry: {last_gl_entry}")
@@ -565,9 +567,13 @@ def make_gl_entries(
 
 	if gl_entries:
 		try:
+			print("Making GL Entries")
+			list([print(x) for x in gl_entries])
 			make_gl_entries(gl_entries, cancel=(doc.docstatus == 2), merge_entries=True)
 			frappe.db.commit()
 		except Exception as e:
+			print(e.args)
+			print(traceback.format_exc())
 			if frappe.flags.in_test:
 				doc.log_error(f"Error while processing deferred accounting for Invoice {doc.name}")
 				raise e
